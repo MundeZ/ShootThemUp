@@ -1,7 +1,9 @@
 .vs
 *.sln
+.idea/
 DerivedDataCache/
 Intermediate/
 Saved/
 Binaries/
 Build/
+Script/
