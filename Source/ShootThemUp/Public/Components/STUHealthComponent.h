@@ -24,5 +24,9 @@ protected:
     virtual void BeginPlay() override;
 
 private:
-    float Health = 0.0f;
+    float Health = 100.0f;
+
+    UFUNCTION(Category="Health")
+    void OnTakeAnyDamage(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy,
+                               AActor* DamageCauser);
 };
