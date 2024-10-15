@@ -8,6 +8,7 @@
 #include "Components/STUCharacterMovementComponent.h"
 #include "Components/STUHealthComponent.h"
 #include "Components/TextRenderComponent.h"
+#include "Weapon/STUBaseWeapon.h"
 
 DEFINE_LOG_CATEGORY_STATIC(BaseCharacterLog, All, All);
 
@@ -42,8 +43,10 @@ void ASTUBaseCharacter::BeginPlay()
     OnHealthChanged(HealthComponent->GetHealth());
     HealthComponent->OnDeath.AddUObject(this, &ASTUBaseCharacter::OnDeath);
     HealthComponent->OnHealthChanged.AddUObject(this, &ASTUBaseCharacter::OnHealthChanged);
-
+    
     LandedDelegate.AddDynamic(this, &ASTUBaseCharacter::OnGroundLanded);
+
+    SpawnWeapon();
 }
 
 
@@ -117,7 +120,7 @@ void ASTUBaseCharacter::OnDeath()
     PlayAnimMontage(DeathAnimMontage);
 
     GetCharacterMovement()->DisableMovement();
-    SetLifeSpan(5.0f);
+    SetLifeSpan(LifeSpanOnDeath);
     if (Controller)
     {
         Controller->ChangeState(NAME_Spectating);
@@ -134,9 +137,22 @@ void ASTUBaseCharacter::OnGroundLanded(const FHitResult& Hit)
     const auto FallVelocityZ = -GetCharacterMovement()->Velocity.Z;
     UE_LOG(BaseCharacterLog, Display, TEXT("On landed: %f"), FallVelocityZ)
 
-    if (FallVelocityZ < LandedDamageVelocity.X) return;
+    if (FallVelocityZ < LandedDamageVelocity.X)
+        return;
 
     const auto FinalDamage = FMath::GetMappedRangeValueClamped(LandedDamageVelocity, LandedDamage, FallVelocityZ);
     UE_LOG(BaseCharacterLog, Display, TEXT("FinalDamage: %f"), FinalDamage)
     TakeDamage(FinalDamage, FDamageEvent{}, nullptr, nullptr);
+}
+
+void ASTUBaseCharacter::SpawnWeapon()
+{
+    if (!GetWorld()) return; 
+    
+    auto Weapon = GetWorld()->SpawnActor<ASTUBaseWeapon>(WeaponClass);
+    if (Weapon)
+    {
+        FAttachmentTransformRules AttachmentRules(EAttachmentRule::SnapToTarget, false);
+        Weapon->AttachToComponent(GetMesh(),AttachmentRules, "WeaponSocket");
+    }
 }
