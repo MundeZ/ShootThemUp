@@ -11,5 +11,4 @@ ASTUBaseWeapon::ASTUBaseWeapon()
 void ASTUBaseWeapon::BeginPlay()
 {
     Super::BeginPlay();
-
 }
