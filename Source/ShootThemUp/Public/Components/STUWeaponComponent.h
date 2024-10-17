@@ -15,7 +15,7 @@ class SHOOTTHEMUP_API USTUWeaponComponent : public UActorComponent
 
 public:
     USTUWeaponComponent();
-
+    
     void Fire();
 
 protected:
@@ -24,7 +24,7 @@ protected:
 
     UPROPERTY(EditDefaultsOnly, Category = "Weapon")
     FName WeaponAttachPointName = "WeaponSocket";
-
+    
     virtual void BeginPlay() override;
 
 private:
