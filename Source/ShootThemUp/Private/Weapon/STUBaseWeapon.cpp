@@ -35,12 +35,12 @@ void ASTUBaseWeapon::MakeShot()
     FVector TraceStart, TraceEnd;
     GetTraceData(TraceStart, TraceEnd);
 
-
     FHitResult HitResult;
     MakeHit(HitResult, TraceStart, TraceEnd);
 
     if (HitResult.bBlockingHit)
     {
+        MakeDamage(HitResult);
         DrawDebugLine(GetWorld(), GetMuzzleWorldLocation(), HitResult.ImpactPoint, FColor::Red, false, 3.0f, 0, 3.0f);
         DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 10.0f, 24, FColor::Red, false, 5.0f);
 
@@ -100,3 +100,12 @@ void ASTUBaseWeapon::MakeHit(FHitResult& HitResult, const FVector& TraceStart, c
 
     GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, ECollisionChannel::ECC_Visibility, CollisionParams);
 }
+
+void ASTUBaseWeapon::MakeDamage(const FHitResult& HitResult)
+{
+    const auto DamagedActor = HitResult.GetActor();
+    if (!DamagedActor)
+        return;
+
+    DamagedActor->TakeDamage(DamageAmout, FDamageEvent(), GetPLayerController(), this);
+};
