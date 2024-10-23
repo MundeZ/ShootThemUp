@@ -9,6 +9,22 @@ USTUWeaponComponent::USTUWeaponComponent()
     PrimaryComponentTick.bCanEverTick = false;
 }
 
+void USTUWeaponComponent::StartFire()
+{
+    if (!CurrentWeapon)
+        return;
+    CurrentWeapon->StartFire();
+}
+
+void USTUWeaponComponent::StopFire()
+{
+    if (!CurrentWeapon)
+    {
+        return;
+    }
+    CurrentWeapon->StopFire();
+}
+
 void USTUWeaponComponent::BeginPlay()
 {
     Super::BeginPlay();
@@ -32,11 +48,4 @@ void USTUWeaponComponent::SpawnWeapon()
     CurrentWeapon->AttachToComponent(Character->GetMesh(), AttachmentRules, WeaponAttachPointName);
     CurrentWeapon->SetOwner(GetOwner());
 
-}
-
-void USTUWeaponComponent::Fire()
-{
-    if (!CurrentWeapon)
-        return;
-    CurrentWeapon->Fire();
 }
