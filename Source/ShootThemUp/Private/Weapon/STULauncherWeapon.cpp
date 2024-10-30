@@ -3,7 +3,7 @@
 
 #include "Weapon/STULauncherWeapon.h"
 #include "Weapon/STUProjecttile.h"
-#include "Kismet//GameplayStatics.h"
+
 
 void ASTULauncherWeapon::StartFire()
 {
@@ -12,8 +12,24 @@ void ASTULauncherWeapon::StartFire()
 
 void ASTULauncherWeapon::MakeShot()
 {
+    if (!GetWorld())
+        return;
+
+    FVector TraceStart, TraceEnd;
+    GetTraceData(TraceStart, TraceEnd);
+
+    FHitResult HitResult;
+    MakeHit(HitResult, TraceStart, TraceEnd);
+
+    const FVector EndPoint = HitResult.bBlockingHit ? HitResult.ImpactPoint : TraceEnd;
+    const FVector Direction = (EndPoint - GetMuzzleWorldLocation()).GetSafeNormal();
+
     const FTransform SpawnTransform(FRotator::ZeroRotator, GetMuzzleWorldLocation());
-    auto ProjectTile = UGameplayStatics::BeginDeferredActorSpawnFromClass(GetWorld(), ProjecttileClass, SpawnTransform);
-    // set params
-    UGameplayStatics::FinishSpawningActor(ProjectTile, SpawnTransform);
+    ASTUProjecttile* ProjectTile = GetWorld()->SpawnActorDeferred<ASTUProjecttile>(ProjecttileClass, SpawnTransform);
+    if (ProjectTile)
+    {
+        ProjectTile->SetShotDirection(Direction);
+        ProjectTile->FinishSpawning(SpawnTransform);
+    }
+
 }

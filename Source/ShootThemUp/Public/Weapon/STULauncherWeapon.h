@@ -19,6 +19,7 @@ public:
 protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Weapon")
     TSubclassOf<ASTUProjecttile> ProjecttileClass;
-    
+
     virtual void MakeShot() override;
+
 };
