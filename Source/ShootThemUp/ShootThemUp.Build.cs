@@ -13,7 +13,9 @@ public class ShootThemUp : ModuleRules
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 		
 		PublicIncludePaths.AddRange(new string[] { "ShootThemUp/Public/Components" });
-
+		
+		PublicDefinitions.Add("USE_RTTI=0");
+		
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
 		

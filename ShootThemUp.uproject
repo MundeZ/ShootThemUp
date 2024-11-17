@@ -1,6 +1,6 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "4.26",
+	"EngineAssociation": "{00046301-08DD-06FE-B603-F8DA9840571D}",
 	"Category": "",
 	"Description": "",
 	"Modules": [
@@ -12,5 +12,9 @@
 				"Engine"
 			]
 		}
+	],
+	"TargetPlatforms": [
+		"Windows",
+		"Linux"
 	]
 }
