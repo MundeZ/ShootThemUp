@@ -3,7 +3,9 @@
 #include "Components/STUWeaponComponent.h"
 #include "Weapon/STUBaseWeapon.h"
 #include "GameFramework/Character.h"
-#include "Widgets/Text/ISlateEditableTextWidget.h"
+#include "Animations/STUEquipFinishedAnimNotify.h"
+
+DEFINE_LOG_CATEGORY_STATIC(LogWeaponComponent, All, All);
 
 USTUWeaponComponent::USTUWeaponComponent()
 {
@@ -35,7 +37,7 @@ void USTUWeaponComponent::NextWeapon()
 void USTUWeaponComponent::BeginPlay()
 {
     Super::BeginPlay();
-
+    initAnimations();
     SpawnWeapons();
     EquipWeapon(CurrentWeaponIndex);
 }
@@ -43,7 +45,7 @@ void USTUWeaponComponent::BeginPlay()
 void USTUWeaponComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
     CurrentWeapon = nullptr;
-    for (auto Weapon:Weapons)
+    for (auto Weapon : Weapons)
     {
         Weapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
         Weapon->Destroy();
@@ -73,7 +75,8 @@ void USTUWeaponComponent::SpawnWeapons()
     for (auto WeaponClass : WeaponClasses)
     {
         auto Weapon = GetWorld()->SpawnActor<ASTUBaseWeapon>(WeaponClass);
-        if (!Weapon) continue;
+        if (!Weapon)
+            continue;
         Weapon->SetOwner(Character);
         Weapons.Add(Weapon);
 
@@ -83,6 +86,7 @@ void USTUWeaponComponent::SpawnWeapons()
 
 void USTUWeaponComponent::EquipWeapon(int32 WeaponIndex)
 {
+
     ACharacter* Character = Cast<ACharacter>(GetOwner());
     if (!Character)
         return;
@@ -95,4 +99,51 @@ void USTUWeaponComponent::EquipWeapon(int32 WeaponIndex)
 
     CurrentWeapon = Weapons[WeaponIndex];
     AttachWeaponToSocket(CurrentWeapon, Character->GetMesh(), WeaponEquipSocketName);
+    PlayAnimMontage(EquipAnimMontage);
+}
+
+void USTUWeaponComponent::PlayAnimMontage(UAnimMontage* Animation)
+{
+    if (!Animation)
+        return;
+
+    ACharacter* Character = Cast<ACharacter>(GetOwner());
+
+    if (!Character)
+        return;
+    Character->PlayAnimMontage(Animation);
+}
+
+void USTUWeaponComponent::initAnimations()
+{
+    if (!EquipAnimMontage)
+    {
+        return;
+    }
+    const auto NotifyEvents = EquipAnimMontage->Notifies;
+
+    for (auto NotifyEvent : NotifyEvents)
+    {
+        auto EquipFinishedNotify = Cast<USTUEquipFinishedAnimNotify>(NotifyEvent.Notify);
+        if (EquipFinishedNotify)
+        {
+            EquipFinishedNotify->OnNotified.AddUObject(this, &USTUWeaponComponent::OnEquipFinished);
+            break;
+        }
+    }
+}
+
+void USTUWeaponComponent::OnEquipFinished(USkeletalMeshComponent* MeshComponent)
+{
+    ACharacter* Character = Cast<ACharacter>(GetOwner());
+
+    if (!Character)
+        return;
+
+    if (Character->GetMesh() == MeshComponent)
+    {
+        UE_LOG(LogWeaponComponent, Display, TEXT("Equip finished"))
+        IsEquipFinished = true;
+    }
+
 }
