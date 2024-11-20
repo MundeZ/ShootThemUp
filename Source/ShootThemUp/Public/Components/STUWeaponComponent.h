@@ -20,8 +20,6 @@ public:
     void StopFire();
     void NextWeapon();
 
-    bool IsEquipFinished = false;
-
 protected:
     UPROPERTY(EditDefaultsOnly, Category = "Weapon")
     TArray<TSubclassOf<ASTUBaseWeapon>> WeaponClasses;
@@ -46,6 +44,7 @@ private:
     TArray<ASTUBaseWeapon*> Weapons;
 
     int32 CurrentWeaponIndex = 0;
+    bool EquipAnimInProgress = false;
 
     void AttachWeaponToSocket(ASTUBaseWeapon* Weapon, USceneComponent* SceneComponent, const FName& SocketName);
     void SpawnWeapons();
@@ -53,4 +52,6 @@ private:
     void PlayAnimMontage(UAnimMontage* Animation);
     void initAnimations();
     void OnEquipFinished(USkeletalMeshComponent* MeshComponent);
+    bool CanFire() const;
+    bool CanEquip() const;
 };
