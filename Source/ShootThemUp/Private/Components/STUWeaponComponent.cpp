@@ -83,7 +83,7 @@ void USTUWeaponComponent::SpawnWeapons()
 
     for (auto OneWeaponData : WeaponData)
     {
-        auto Weapon = GetWorld()->SpawnActor<ASTUBaseWeapon>(OneWeaponData.WeaponClasses);
+        auto Weapon = GetWorld()->SpawnActor<ASTUBaseWeapon>(OneWeaponData.WeaponClass);
         if (!Weapon)
             continue;
         Weapon->SetOwner(Character);
@@ -112,12 +112,10 @@ void USTUWeaponComponent::EquipWeapon(int32 WeaponIndex)
     }
 
     CurrentWeapon = Weapons[WeaponIndex];
-    //CurrentReloadAnimMontage = WeaponData[WeaponIndex].ReloadAnimMontage;
-    const auto CurrentWeaponData = WeaponData.FindByPredicate([&](const
-        FWeaponData& Data)
-        {
-            return Data.WeaponClasses == CurrentWeapon->GetClass();
-        });
+    const auto CurrentWeaponData = WeaponData.FindByPredicate([&](const FWeaponData& Data)
+    {
+        return Data.WeaponClass == CurrentWeapon->GetClass();
+    });
 
     CurrentReloadAnimMontage = CurrentWeaponData ? CurrentWeaponData->ReloadAnimMontage : nullptr;
 
@@ -125,6 +123,7 @@ void USTUWeaponComponent::EquipWeapon(int32 WeaponIndex)
     EquipAnimInProgress = true;
     PlayAnimMontage(EquipAnimMontage);
 }
+
 
 void USTUWeaponComponent::PlayAnimMontage(UAnimMontage* Animation)
 {
