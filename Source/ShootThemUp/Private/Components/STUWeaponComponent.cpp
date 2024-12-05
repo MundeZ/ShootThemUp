@@ -4,6 +4,7 @@
 #include "Weapon/STUBaseWeapon.h"
 #include "GameFramework/Character.h"
 #include "Animations/STUEquipFinishedAnimNotify.h"
+#include "Animations/STUReloadFinishedAnimNotify.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogWeaponComponent, All, All);
 
@@ -40,6 +41,9 @@ void USTUWeaponComponent::NextWeapon()
 
 void USTUWeaponComponent::Reload()
 {
+    if (!CanReload()) return;
+
+    ReloadAnimInProgress = true;
     PlayAnimMontage(CurrentReloadAnimMontage);
 }
 
@@ -139,20 +143,19 @@ void USTUWeaponComponent::PlayAnimMontage(UAnimMontage* Animation)
 
 void USTUWeaponComponent::initAnimations()
 {
-    if (!EquipAnimMontage)
+    auto EquipFinishedNotify = FindNotifyByClass<USTUEquipFinishedAnimNotify>(EquipAnimMontage);
+    if (EquipFinishedNotify)
     {
-        return;
+        EquipFinishedNotify->OnNotified.AddUObject(this, &USTUWeaponComponent::OnEquipFinished);
     }
-    const auto NotifyEvents = EquipAnimMontage->Notifies;
-
-    for (auto NotifyEvent : NotifyEvents)
+    
+    for (auto OneWeaponData : WeaponData)
     {
-        auto EquipFinishedNotify = Cast<USTUEquipFinishedAnimNotify>(NotifyEvent.Notify);
-        if (EquipFinishedNotify)
-        {
-            EquipFinishedNotify->OnNotified.AddUObject(this, &USTUWeaponComponent::OnEquipFinished);
-            break;
-        }
+        auto ReloadFinishedAnimNotify = FindNotifyByClass<USTUReloadFinishedAnimNotify>(OneWeaponData.ReloadAnimMontage);
+        
+        if (!ReloadFinishedAnimNotify) continue;
+        
+        ReloadFinishedAnimNotify->OnNotified.AddUObject(this, &USTUWeaponComponent::OnReloadFinished);
     }
 }
 
@@ -160,19 +163,32 @@ void USTUWeaponComponent::OnEquipFinished(USkeletalMeshComponent* MeshComponent)
 {
     ACharacter* Character = Cast<ACharacter>(GetOwner());
 
-    if (!Character || MeshComponent != Character->GetMesh())
-        return;
+    if (!Character || MeshComponent != Character->GetMesh()) return;
 
     EquipAnimInProgress = false;
 
 }
 
+void USTUWeaponComponent::OnReloadFinished(USkeletalMeshComponent* MeshComponent)
+{
+    ACharacter* Character = Cast<ACharacter>(GetOwner());
+
+    if (!Character || MeshComponent != Character->GetMesh()) return;
+
+    ReloadAnimInProgress = false;
+}
+
 bool USTUWeaponComponent::CanFire() const
 {
-    return CurrentWeapon != nullptr && !EquipAnimInProgress;
+    return CurrentWeapon != nullptr && !EquipAnimInProgress && !ReloadAnimInProgress;
 }
 
 bool USTUWeaponComponent::CanEquip() const
 {
     return !EquipAnimInProgress;
+}
+
+bool USTUWeaponComponent::CanReload() const
+{
+    return CurrentWeapon != nullptr && !EquipAnimInProgress && !ReloadAnimInProgress;
 }
