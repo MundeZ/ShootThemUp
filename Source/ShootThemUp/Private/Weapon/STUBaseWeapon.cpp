@@ -2,6 +2,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Engine/World.h"
 #include "DrawDebugHelpers.h"
+#include "STUWeaponComponent.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/Controller.h"
 
@@ -18,6 +19,8 @@ void ASTUBaseWeapon::BeginPlay()
 {
     Super::BeginPlay();
     check(WeaponMesh)
+    checkf(DefaultAmmo.Bullets >0, TEXT("DefaultAmmo.Bullets must be greater than 0"))
+    checkf(DefaultAmmo.Clips > 0, TEXT("DefaultAmmo.Clips must be greater than 0"))
     CurrentAmmo = DefaultAmmo;
 }
 
@@ -89,7 +92,7 @@ void ASTUBaseWeapon::DecreaseAmmo()
         UE_LOG(LogBaseWeapon, Warning, TEXT("Clip is empty"));
         return;
     }
-    
+
     CurrentAmmo.Bullets--;
     LogAmmo();
 
@@ -112,7 +115,6 @@ bool ASTUBaseWeapon::IsClipEmpty() const
 
 void ASTUBaseWeapon::ChangeClip()
 {
-    
     if (!CurrentAmmo.Infinite)
     {
         if (CurrentAmmo.Clips == 0)
@@ -128,7 +130,7 @@ void ASTUBaseWeapon::ChangeClip()
 
 bool ASTUBaseWeapon::CanReload() const
 {
-    return CurrentAmmo.Bullets < DefaultAmmo.Bullets && CurrentAmmo.Clips >0;
+    return CurrentAmmo.Bullets < DefaultAmmo.Bullets && CurrentAmmo.Clips > 0;
 }
 
 void ASTUBaseWeapon::LogAmmo()
