@@ -8,7 +8,6 @@
 #include "STUHealthComponent.generated.h"
 
 
-
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class SHOOTTHEMUP_API USTUHealthComponent : public UActorComponent
 {
@@ -31,10 +30,13 @@ public:
         return FMath::IsNearlyZero(Health);
     };
 
+    UFUNCTION(BlueprintCallable, category="Health")
+    float GetHealthPercent() const { return Health / MaxHealth; }
+    
 protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Health", meta=(ClampMin="0.0", ClampMax="100.0"))
     float MaxHealth = 100.0f;
-
+    
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Heal")
     bool AutoHeal = true;
 
