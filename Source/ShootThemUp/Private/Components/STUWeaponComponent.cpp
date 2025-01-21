@@ -82,7 +82,6 @@ bool USTUWeaponComponent::TryToAddAmmo(TSubclassOf<ASTUBaseWeapon> WeaponType, i
 void USTUWeaponComponent::BeginPlay()
 {
     Super::BeginPlay();
-    int32 test = Weapons.Num();
     checkf(Weapons.Num() <= WeaponNum, TEXT("Our character can hold only %i weapon items"), WeaponNum)
     initAnimations();
     SpawnWeapons();
