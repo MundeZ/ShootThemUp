@@ -3,8 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "STUProjecttile.h"
 #include "Weapon/STUBaseWeapon.h"
+#include <Weapon/STUProjecttile.h>
 #include "STULauncherWeapon.generated.h"
 
 

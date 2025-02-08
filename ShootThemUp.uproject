@@ -14,6 +14,12 @@
 			]
 		}
 	],
+	"Plugins": [
+		{
+			"Name": "CascadeToNiagaraConverter",
+			"Enabled": true
+		}
+	],
 	"TargetPlatforms": [
 		"Windows",
 		"Linux"
