@@ -6,6 +6,8 @@
 #include "BehaviorTree/BTTaskNode.h"
 #include "STUNextLocationTask.generated.h"
 
+
+
 /**
  * @class USTUNextLocationTask
  * @brief Represents a custom behavior tree task node for determining the next location in the Shoot Them Up game.
@@ -15,9 +17,21 @@
  * the next target location based on specific game requirements. This task node can configure
  * navigation locations to guide AI-controlled characters in the environment.
  */
+
 UCLASS()
 class SHOOTTHEMUP_API USTUNextLocationTask : public UBTTaskNode
 {
-	GENERATED_BODY()
-	
+    GENERATED_BODY()
+
+public:
+    USTUNextLocationTask();
+
+    virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
+
+protected:
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
+    float SearchRadius = 1000.0f;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
+    FBlackboardKeySelector AimLocationKey;
 };
