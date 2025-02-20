@@ -7,7 +7,6 @@
 #include "STUNextLocationTask.generated.h"
 
 
-
 /**
  * @class USTUNextLocationTask
  * @brief Represents a custom behavior tree task node for determining the next location in the Shoot Them Up game.
@@ -34,4 +33,10 @@ protected:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
     FBlackboardKeySelector AimLocationKey;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
+    bool SelfCenter = true;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI", meta = (EditCondition = "!SelfCenter"))
+    FBlackboardKeySelector CenterActorKey;
 };
