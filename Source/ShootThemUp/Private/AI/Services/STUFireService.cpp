@@ -14,6 +14,8 @@ USTUFireService::USTUFireService()
 
 void USTUFireService::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
+    Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
+    
     const auto Controller = OwnerComp.GetAIOwner();
     const auto Blackboard = OwnerComp.GetBlackboardComponent();
 
@@ -27,6 +29,4 @@ void USTUFireService::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMem
             HasAim ? WeaponComponent->StartFire() : WeaponComponent->StopFire();
         }
     }
-    
-    Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 }

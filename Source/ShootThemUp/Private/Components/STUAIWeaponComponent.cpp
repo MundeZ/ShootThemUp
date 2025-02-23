@@ -5,7 +5,7 @@
 
 void USTUAIWeaponComponent::StartFire()
 {
-    Super::StartFire();
+    //Super::StartFire();
 
     if (!CanFire()) return;
 
