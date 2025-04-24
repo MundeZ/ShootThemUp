@@ -10,6 +10,8 @@ ASTUAIController::ASTUAIController()
 {
     STUAIPerceptationComponent = CreateDefaultSubobject<USTUAIPerceptionComponent>(TEXT("STUPerceptionComponent"));
     SetPerceptionComponent(*STUAIPerceptationComponent);
+
+    bWantsPlayerState = true;
 }
 
 
