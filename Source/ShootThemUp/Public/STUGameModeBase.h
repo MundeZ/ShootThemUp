@@ -7,9 +7,6 @@
 #include "STUCoreTypes.h"
 #include "STUGameModeBase.generated.h"
 
-/**
- *
- */
 
 class AAIController;
 
@@ -30,10 +27,15 @@ protected:
 
     UPROPERTY(EditDefaultsOnly, Category = "Game")
     TSubclassOf<APawn> AIPawnClass;
-    
+
     UPROPERTY(EditDefaultsOnly, Category = "Game")
     FGameData GameData;
 
 private:
+    int32 CurrentRound = 0;
+    int32 RoundCountDown = 0;
+    FTimerHandle GameRoundTimerHandle;
     void SpawnBots();
+    void StartRound();
+    void GameTimerUpdate();
 };
