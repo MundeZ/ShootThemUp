@@ -3,8 +3,10 @@
 #include "STUGameModeBase.h"
 
 #include "AIController.h"
+#include "Player/STUBaseCharacter.h"
 #include "Player/STUPlayerController.h"
 #include "UI/STUGameHUD.h"
+#include "Player/STUPlayerState.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogSTUGameModeBase, All, All);
 
@@ -13,6 +15,7 @@ ASTUGameModeBase::ASTUGameModeBase()
     DefaultPawnClass = ASTUGameModeBase::StaticClass();
     PlayerControllerClass = ASTUPlayerController::StaticClass();
     HUDClass = ASTUGameHUD::StaticClass();
+    PlayerStateClass = ASTUPlayerState::StaticClass();
 }
 
 void ASTUGameModeBase::StartPlay()
@@ -20,9 +23,9 @@ void ASTUGameModeBase::StartPlay()
     Super::StartPlay();
 
     SpawnBots();
+    CreateTeamsInfo();
 
     CurrentRound = 1;
-
     StartRound();
 }
 
@@ -93,4 +96,52 @@ void ASTUGameModeBase::ResetOnePlayer(AController* Controller)
         Controller->GetPawn()->Reset();
     }
     RestartPlayer(Controller);
+    SetPlayerColor(Controller);
+}
+
+void ASTUGameModeBase::CreateTeamsInfo()
+{
+    if (!GetWorld()) { return; }
+
+    int32 TeamID = 1;
+
+    for (auto It = GetWorld()->GetControllerIterator(); It; ++It)
+    {
+        const auto PlayerController = It->Get();
+        if (!PlayerController) continue;
+        const auto PlayerState = Cast<ASTUPlayerState>(PlayerController->PlayerState);
+        if (!PlayerState) { continue; }
+
+        PlayerState->SetTeamID(TeamID);
+        PlayerState->SetTeamColor(DetermineColorByTeamID(TeamID));
+
+        SetPlayerColor(PlayerController);
+        TeamID = TeamID == 1 ? 2 : 1;
+    }
+}
+
+FLinearColor ASTUGameModeBase::DetermineColorByTeamID(int32 TeamID) const
+{
+    if (TeamID - 1 < GameData.TeamColors.Num())
+    {
+        return GameData.TeamColors[TeamID - 1];
+    }
+    else
+    {
+        UE_LOG(LogSTUGameModeBase, Warning, TEXT("TeamID %i is out of range"), TeamID);
+    }
+
+    return GameData.DefaultTeamColor;
+}
+
+void ASTUGameModeBase::SetPlayerColor(AController* Controller)
+{
+    if (!Controller) return;
+    const auto Character = Cast<ASTUBaseCharacter>(Controller->GetPawn());
+    if (!Character) return;
+
+    const auto PlayerState = Cast<ASTUPlayerState>(Controller->PlayerState);
+    if (!PlayerState) return;
+
+    Character->SetPlayerColor(PlayerState->GetTeamColor());
 }
