@@ -11,6 +11,7 @@
  */
 
 class USTUAIPerceptionComponent;
+class USTURespawnComponent;
 
 UCLASS()
 class SHOOTTHEMUP_API ASTUAIController : public AAIController
@@ -22,6 +23,9 @@ protected:
     UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Components")
     USTUAIPerceptionComponent* STUAIPerceptationComponent;
 
+    UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Components")
+    USTURespawnComponent* RespawnComponent;
+    
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
     FName FocusOnKeyName = "EnemyActor";
 

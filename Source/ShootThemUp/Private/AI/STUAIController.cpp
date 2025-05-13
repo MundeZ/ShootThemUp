@@ -5,11 +5,14 @@
 #include "AI/STUAICharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Components/STUAIPerceptionComponent.h"
+#include "Components/STURespawnComponent.h"
 
 ASTUAIController::ASTUAIController()
 {
     STUAIPerceptationComponent = CreateDefaultSubobject<USTUAIPerceptionComponent>(TEXT("STUPerceptionComponent"));
     SetPerceptionComponent(*STUAIPerceptationComponent);
+
+    RespawnComponent = CreateDefaultSubobject<USTURespawnComponent>(TEXT("RespawnComponent"));
 
     bWantsPlayerState = true;
 }
@@ -37,6 +40,6 @@ void ASTUAIController::Tick(float DeltaSeconds)
 AActor* ASTUAIController::GetFocusOnActor() const
 {
     if (!GetBlackboardComponent()) return nullptr;
-    
+
     return Cast<AActor>(GetBlackboardComponent()->GetValueAsObject(FocusOnKeyName));
 }
