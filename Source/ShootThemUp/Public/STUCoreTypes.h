@@ -91,7 +91,7 @@ struct FGameData
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Game", meta = (ClampMin = "1", ClampMax = "10"))
     int32 PlayersNum = 2;
-    
+
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Game", meta = (ClampMin = "1", ClampMax = "10"))
     int32 RoundsNum = 4;
 
@@ -103,8 +103,19 @@ struct FGameData
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
     TArray<FLinearColor> TeamColors;
-    
+
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Game", meta = (ClampMin = "3", ClampMax = "600"))
     int32 RespawnTime = 10; // in seconds
-    
+
 };
+
+UENUM(BlueprintType)
+enum class ESTUMatchState : uint8
+{
+    WaitingToStart = 0,
+    InProgress,
+    Pause,
+    GameOver
+};
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnMatchStateChangedSignature, ESTUMatchState);
