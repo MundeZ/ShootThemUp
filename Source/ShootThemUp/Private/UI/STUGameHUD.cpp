@@ -18,11 +18,18 @@ void ASTUGameHUD::DrawHUD()
 void ASTUGameHUD::BeginPlay()
 {
     Super::BeginPlay();
-    auto PlayerHUDWidget = CreateWidget<UUserWidget>(GetWorld(), PlayerHUDWidgetClass);
-    if (PlayerHUDWidget)
+
+    GameWidgets.Add(ESTUMatchState::InProgress, CreateWidget<UUserWidget>(GetWorld(), PlayerHUDWidgetClass));
+    GameWidgets.Add(ESTUMatchState::Pause, CreateWidget<UUserWidget>(GetWorld(), PauseWidgetClass));
+
+    for (const auto& Widget : GameWidgets)
     {
-        PlayerHUDWidget->AddToViewport();
+        const auto GameWidget = Widget.Value;
+        if (!GameWidget) continue;
+        GameWidget->AddToViewport();
+        GameWidget->SetVisibility(ESlateVisibility::Hidden);
     }
+
     if (GetWorld())
     {
         const auto GameMode = Cast<ASTUGameModeBase>(GetWorld()->GetAuthGameMode());
@@ -35,12 +42,12 @@ void ASTUGameHUD::BeginPlay()
 
 void ASTUGameHUD::DrawCrosshair()
 {
-    int32 SizeX = Canvas->SizeX;
-    int32 SizeY = Canvas->SizeY;
+    const int32 SizeX = Canvas->SizeX;
+    const int32 SizeY = Canvas->SizeY;
     const TInterval<float> Center(SizeX * 0.5, SizeY * 0.5);
 
-    const float HalfLineSize = 10.0f;
-    const float LineThickness = 2.0f;
+    constexpr float HalfLineSize = 10.0f;
+    constexpr float LineThickness = 2.0f;
     const FLinearColor LineColor = FLinearColor::Green;
 
     DrawLine(Center.Min - HalfLineSize, Center.Max, Center.Min + HalfLineSize, Center.Max, LineColor, LineThickness);
@@ -49,5 +56,20 @@ void ASTUGameHUD::DrawCrosshair()
 
 void ASTUGameHUD::OnMatchStateChanged(ESTUMatchState NewState)
 {
+    if (CurrentWidget)
+    {
+        CurrentWidget->SetVisibility(ESlateVisibility::Hidden);
+    }
+
+    if (GameWidgets.Contains(NewState))
+    {
+        CurrentWidget = GameWidgets[NewState];
+    }
+
+    if (CurrentWidget)
+    {
+        CurrentWidget->SetVisibility(ESlateVisibility::Visible);
+    }
+
     UE_LOG(LogSTUGameHUD, Display, TEXT("Match State Changed: %s"), *UEnum::GetValueAsString(NewState));
 }

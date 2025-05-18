@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "STUPlayerController.generated.h"
 
+enum class ESTUMatchState : uint8;
 class USTURespawnComponent;
 /**
  *
@@ -22,5 +23,11 @@ protected:
     UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Components")
     USTURespawnComponent* RespawnComponent;
 
+    virtual void BeginPlay() override;
     virtual void OnPossess(APawn* InPawn) override;
+    virtual void SetupInputComponent() override;
+
+private:
+    void OnPauseGame();
+    void OnMatchStateChanged(ESTUMatchState State);
 };
