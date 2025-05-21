@@ -4,6 +4,7 @@
 
 #include "AIController.h"
 #include "EngineUtils.h"
+#include "HeadMountedDisplayTypes.h"
 #include "Player/STUBaseCharacter.h"
 #include "Player/STUPlayerController.h"
 #include "UI/STUGameHUD.h"
@@ -165,7 +166,7 @@ void ASTUGameModeBase::CreateTeamsInfo()
 
         PlayerState->SetTeamID(TeamID);
         PlayerState->SetTeamColor(DetermineColorByTeamID(TeamID));
-
+        PlayerState->SetPlayerName(PlayerController->IsPlayerController() ? "Player" : "Bot");
         SetPlayerColor(PlayerController);
         TeamID = TeamID == 1 ? 2 : 1;
     }
