@@ -24,7 +24,7 @@ protected:
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
     TSubclassOf<UUserWidget> GameOverWidgetClass;
-    
+
     virtual void BeginPlay() override;
 
 private:
@@ -33,7 +33,7 @@ private:
 
     UPROPERTY()
     UUserWidget* CurrentWidget = nullptr;
-    
+
     void DrawCrosshair();
     void OnMatchStateChanged(ESTUMatchState NewState);
 };

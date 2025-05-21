@@ -17,5 +17,5 @@ class SHOOTTHEMUP_API USTUSpectatorWidget : public UUserWidget
 public:
     UFUNCTION(BlueprintCallable, Category = "UI")
     bool GetRespawnTime(int32& CountDownTime) const;
-    
+
 };
