@@ -3,8 +3,12 @@
 
 #include "Menu/UI/STUMenuWidget.h"
 
+#include "EngineUtils.h"
+#include "STUGameInstance.h"
 #include "Components/Button.h"
 #include "Kismet/GameplayStatics.h"
+
+DEFINE_LOG_CATEGORY_STATIC(LogSTUMenuWidget, All, All);
 
 void USTUMenuWidget::NativeOnInitialized()
 {
@@ -17,6 +21,14 @@ void USTUMenuWidget::NativeOnInitialized()
 
 void USTUMenuWidget::OnStartGame()
 {
-    const FName StartupLevelName = "TestLevel";
-    UGameplayStatics::OpenLevel(this, StartupLevelName);
+    if (!GetWorld()) return;
+    const auto STUGameInstance = GetWorld()->GetGameInstance<USTUGameInstance>();
+    if (!STUGameInstance) return;
+
+    if (STUGameInstance->GetStartupLevelName().IsNone())
+    {
+        UE_LOG(LogSTUMenuWidget, Error, TEXT("No startup level name set!"));
+        return;
+    }
+    UGameplayStatics::OpenLevel(this, STUGameInstance->GetStartupLevelName());
 }
